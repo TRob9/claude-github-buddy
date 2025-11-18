@@ -297,6 +297,6 @@ Contributions welcome! Please open an issue or PR.
 ## Credits
 
 Built with:
-- [Anthropic Claude Agent SDK](https://github.com/anthropics/anthropic-sdk-js)
+- [Anthropic Claude Agent SDK](https://docs.claude.com/en/docs/agent-sdk/overview)
 - Chrome Extensions Manifest V3
 - GitHub Primer CSS

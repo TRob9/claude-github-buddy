@@ -1,0 +1,28 @@
+# Node modules
+server/node_modules/
+server/package-lock.json
+
+# User-specific config
+server/config.json
+
+# Generated review files (contains user data and repo-specific content)
+questions and actions/
+
+# macOS
+.DS_Store
+
+# Extension packaging
+*.zip
+*.crx
+*.pem
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*

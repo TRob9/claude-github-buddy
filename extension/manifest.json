@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "Claude GitHub Buddy",
+  "version": "1.0.0",
+  "description": "AI-powered PR review assistant - ask Claude questions about code changes, or get it to act on instructions right from the browser!",
+  "icons": {
+    "48": "icons/icon-48.png",
+    "96": "icons/icon-96.png",
+    "128": "icons/icon-128.png"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://github.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://github.com/*/pull/*"
+      ],
+      "js": [
+        "scripts/permission-dialog.js",
+        "scripts/settings-dialog.js",
+        "scripts/agent-monitor-panel.js",
+        "scripts/agent-client.js",
+        "scripts/content.js"
+      ],
+      "css": ["styles/content.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "background": {
+    "service_worker": "scripts/background.js"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*"],
+      "matches": ["https://github.com/*"]
+    }
+  ]
+}

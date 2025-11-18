@@ -9,8 +9,19 @@ A Chrome extension that integrates Claude AI directly into GitHub Pull Requests.
 - **Auto-Answer**: Claude can answer all your questions in one go via Agent SDK
 - **Auto-Complete Actions**: Claude can implement marked actions directly in the repository
 - **Inline Display**: Answers and actions appear as GitHub-style comments in the PR
-- **GitHub Enterprise Support**: Works with GitHub Enterprise (configurable)
 - **Markdown Files**: Questions and actions saved to markdown files for review and version control
+
+## Screenshots
+<img width="679" height="154" alt="image" src="https://github.com/user-attachments/assets/b7d1162c-45e8-4b26-ac1b-47b1fbd93c69" />
+<img width="622" height="153" alt="image" src="https://github.com/user-attachments/assets/3ce5e022-4846-4605-bca4-4f2299612b0d" />
+<img width="460" height="408" alt="image" src="https://github.com/user-attachments/assets/b6dcad32-842f-452e-9c48-d19d39ec5875" />
+<img width="545" height="411" alt="image" src="https://github.com/user-attachments/assets/58caaebb-d74c-4daf-a89d-4cef38a0fb10" />
+<img width="925" height="246" alt="image" src="https://github.com/user-attachments/assets/22f39319-cd24-41d8-8113-e2c52176b572" />
+
+
+
+
+
 
 ## Quick Start
 

@@ -1,6 +1,6 @@
 # Claude GitHub Buddy
 
-A Chrome extension that integrates Claude AI directly into GitHub Pull Requests. Ask questions about code changes, mark sections for action, and let Claude answer or implement changes - all from your browser.
+A Chrome extension that brings your own little Claude helper directly into the "Files Changed" section GitHub PRs, much like Github's native Copilot but better. Ask questions inline about code changes, mark sections for action, and let Claude answer or implement changes - all from your browser.
 
 ## Features
 

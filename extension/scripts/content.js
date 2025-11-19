@@ -1874,13 +1874,19 @@
         const targetRow = findRowByLineNumber(file, endLine);
         if (!targetRow) return;
 
-        // Validate code if hash exists
+        // Validate code if hash exists AND the entry is not brand new (created >5 seconds ago)
+        // This prevents validation from running on newly created questions in the same session
         let validationStatus = null;
         let validationCurrentCode = null;
         if (entry.codeHash) {
-          const validation = validateCode(entry);
-          validationStatus = validation.status;
-          validationCurrentCode = validation.currentCode;
+          const entryAge = Date.now() - new Date(entry.timestamp).getTime();
+          const isNewEntry = entryAge < 5000; // Less than 5 seconds old
+
+          if (!isNewEntry) {
+            const validation = validateCode(entry);
+            validationStatus = validation.status;
+            validationCurrentCode = validation.currentCode;
+          }
         }
 
         // Create comment row (like GitHub PR comments)
@@ -2325,13 +2331,19 @@
           const targetRow = findRowByLineNumber(file, endLine);
           if (!targetRow) return;
 
-          // Validate code if hash exists
+          // Validate code if hash exists AND the entry is not brand new (created >5 seconds ago)
+          // This prevents validation from running on newly created actions in the same session
           let validationStatus = null;
           let validationCurrentCode = null;
           if (actionEntry.codeHash) {
-            const validation = validateCode(actionEntry);
-            validationStatus = validation.status;
-            validationCurrentCode = validation.currentCode;
+            const entryAge = Date.now() - new Date(actionEntry.timestamp).getTime();
+            const isNewEntry = entryAge < 5000; // Less than 5 seconds old
+
+            if (!isNewEntry) {
+              const validation = validateCode(actionEntry);
+              validationStatus = validation.status;
+              validationCurrentCode = validation.currentCode;
+            }
           }
 
           // Create action row

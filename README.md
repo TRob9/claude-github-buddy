@@ -49,16 +49,11 @@ The server runs on `http://localhost:47382` and handles file I/O and Claude Agen
 
 ### 3. Install the Extension
 
-**Chrome/Edge/Brave:**
-1. Open `chrome://extensions/`
+**Chrome/Edge/Brave/Opera:**
+1. Open `chrome://extensions/` (or `edge://extensions/` for Edge)
 2. Enable "Developer mode" (top-right toggle)
 3. Click "Load unpacked"
 4. Select the `extension/` folder
-
-**Firefox:**
-1. Open `about:debugging#/runtime/this-firefox`
-2. Click "Load Temporary Add-on"
-3. Select `extension/manifest.json`
 
 ### 4. Configure (Optional)
 

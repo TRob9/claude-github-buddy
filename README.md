@@ -64,13 +64,16 @@ Open Settings from the extension dropdown menu to configure:
 
 ## Usage
 
+**Important:** Use **Unified** diff view mode for best results. Split view will work but may provide incomplete context to Claude since line selection is isolated between left/right panes.
+
 ### Asking Questions
 
 1. Go to any GitHub PR → "Files changed" tab
-2. Click line numbers to highlight code (yellow highlight)
-3. Click the Claude icon that appears
-4. Type your question → "Save Question"
-5. Question saved to markdown file
+2. Ensure you're in **Unified** view (recommended) - toggle at top-right of diff
+3. Click line numbers to highlight code (yellow highlight)
+4. Click the Claude icon that appears
+5. Type your question → "Save Question"
+6. Question saved to markdown file
 
 ### Answering Questions
 

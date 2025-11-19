@@ -1,6 +1,6 @@
 # Claude GitHub Buddy
 
-A Chrome extension that brings your own little Claude helper directly into the "Files Changed" section GitHub PRs, much like Github's native Copilot but better. Ask questions inline about code changes, mark sections for action, and let Claude answer or implement changes - all from your browser.
+A Chrome extension that brings a Claude assistant directly into the "Files Changed" section of GitHub PRs, allowing you to ask questions inline about code changes, mark sections for action, and let Claude answer or implement changes at your instruction - all from your browser. Features an in-browser streaming interface for viewing Claude’s live logs, enabling you to redirect it with new prompts if it deviates, or immediately terminate the session if needed.
 
 ## Features
 

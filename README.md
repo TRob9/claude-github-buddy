@@ -127,45 +127,14 @@ claude-github-buddy/
 - `ANTHROPIC_API_KEY` or `ANTHROPIC_VERTEX_PROJECT_ID` - Your Claude API credentials
 
 **Optional:**
-- `GITHUB_ENTERPRISE_URL` - Your GitHub Enterprise domain (e.g., `github.example.com`)
 - `ANTHROPIC_VERTEX_PROJECT_ID` - GCP project ID for Vertex AI
 - `CLOUD_ML_REGION` - GCP region for Vertex AI
 
 **Example:**
 ```bash
 export ANTHROPIC_API_KEY=your-api-key
-export GITHUB_ENTERPRISE_URL=github.example.com
 node server.js
 ```
-
-### GitHub Enterprise Setup
-
-To use with GitHub Enterprise:
-
-1. Set environment variable:
-   ```bash
-   export GITHUB_ENTERPRISE_URL=github.example.com
-   ```
-
-2. Update `extension/manifest.json` to add your domain:
-   ```json
-   "host_permissions": [
-     "https://github.com/*",
-     "https://github.example.com/*"
-   ],
-   "content_scripts": [{
-     "matches": [
-       "https://github.com/*/pull/*",
-       "https://github.example.com/*/pull/*"
-     ],
-     ...
-   }],
-   "web_accessible_resources": [{
-     "matches": ["https://github.com/*", "https://github.example.com/*"]
-   }]
-   ```
-
-3. Reload the extension in Chrome
 
 ## Server API
 
@@ -259,11 +228,6 @@ node --version  # Should be v16 or higher
 - Set `ANTHROPIC_API_KEY` environment variable
 - Check server logs for authentication errors
 - Verify API key has sufficient credits
-
-**GitHub Enterprise not working:**
-- Set `GITHUB_ENTERPRISE_URL` environment variable
-- Update extension manifest with your domain
-- Reload extension after manifest changes
 
 ## Development
 

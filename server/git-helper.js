@@ -152,16 +152,10 @@ export async function getOrCloneRepo(fullRepoName, branch) {
 }
 
 /**
- * Determine the correct clone URL based on the repository
+ * Determine the correct clone URL for the repository
  */
 function getCloneUrl(fullRepoName) {
-  // Check if it's a GitHub Enterprise repo (configurable via environment variable)
-  const enterpriseGitHub = process.env.GITHUB_ENTERPRISE_URL;
-  if (enterpriseGitHub && fullRepoName.includes(enterpriseGitHub)) {
-    return `https://${enterpriseGitHub}/${fullRepoName.replace(enterpriseGitHub + '/', '')}`;
-  }
-
-  // Default to github.com SSH
+  // Use github.com SSH
   return `git@github.com:${fullRepoName}.git`;
 }
 

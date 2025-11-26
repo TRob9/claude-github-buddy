@@ -123,7 +123,7 @@ function handleBrowserMessage(sessionId, data) {
 /**
  * Start an Agent SDK session for answering questions
  */
-export async function answerQuestionsWithAgent(sessionId, prInfo, questionsFilePath) {
+export async function answerQuestionsWithAgent(sessionId, prInfo, questionsFilePath, useUltrathink = false) {
   const session = sessions.get(sessionId);
   if (!session) {
     throw new Error('Session not found');
@@ -167,7 +167,13 @@ export async function answerQuestionsWithAgent(sessionId, prInfo, questionsFileP
   console.log(`[AGENT] Starting session ${sessionId} in workspace: ${repoStatus.path}`);
 
   // Read questions file
-  const questionsContent = fs.readFileSync(questionsFilePath, 'utf8');
+  let questionsContent = fs.readFileSync(questionsFilePath, 'utf8');
+
+  // Prepend ultrathink instruction if enabled
+  if (useUltrathink) {
+    questionsContent = `IMPORTANT: Ultrathink for this task. Use <extended_thinking> mode.\n\n${questionsContent}`;
+    console.log('[AGENT] ✅ Ultrathink mode enabled');
+  }
 
   console.log(`[AGENT] Questions file location: ${questionsFilePath}`);
   console.log(`[AGENT] Repository location: ${repoStatus.path}`);
@@ -575,7 +581,7 @@ async function* createMessageGenerator(sessionId, initialPrompt) {
 /**
  * Start an Agent SDK session for completing actions
  */
-export async function completeActionsWithAgent(sessionId, prInfo, actionsFilePath) {
+export async function completeActionsWithAgent(sessionId, prInfo, actionsFilePath, useUltrathink = false) {
   const session = sessions.get(sessionId);
   if (!session) {
     throw new Error('Session not found');
@@ -619,7 +625,13 @@ export async function completeActionsWithAgent(sessionId, prInfo, actionsFilePat
   console.log(`[AGENT] Starting action session ${sessionId} in workspace: ${repoStatus.path}`);
 
   // Read actions file
-  const actionsContent = fs.readFileSync(actionsFilePath, 'utf8');
+  let actionsContent = fs.readFileSync(actionsFilePath, 'utf8');
+
+  // Prepend ultrathink instruction if enabled
+  if (useUltrathink) {
+    actionsContent = `IMPORTANT: Ultrathink for this task. Use <extended_thinking> mode.\n\n${actionsContent}`;
+    console.log('[AGENT] ✅ Ultrathink mode enabled');
+  }
 
   console.log(`[AGENT] Actions file location: ${actionsFilePath}`);
   console.log(`[AGENT] Repository location: ${repoStatus.path}`);

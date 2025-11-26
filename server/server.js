@@ -184,7 +184,7 @@ const server = http.createServer((req, res) => {
 
       if (req.url === '/answerQuestions' && req.method === 'POST') {
         console.log('[AGENT] Processing answer questions request...');
-        const { sessionId, prInfo } = data;
+        const { sessionId, prInfo, useUltrathink } = data;
 
         if (!sessionId) {
           res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -200,7 +200,7 @@ const server = http.createServer((req, res) => {
         const filePath = path.join(config.prReviewsDir, filename);
 
         // Use Agent SDK to answer questions
-        answerQuestionsWithAgent(sessionId, prInfo, filePath)
+        answerQuestionsWithAgent(sessionId, prInfo, filePath, useUltrathink)
           .then(result => {
             // Parse result and update markdown file
             // (For now, Claude updates via tools directly)
@@ -217,7 +217,7 @@ const server = http.createServer((req, res) => {
 
       if (req.url === '/completeActions' && req.method === 'POST') {
         console.log('[AGENT] Processing complete actions request...');
-        const { sessionId, prInfo } = data;
+        const { sessionId, prInfo, useUltrathink } = data;
 
         if (!sessionId) {
           res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -233,7 +233,7 @@ const server = http.createServer((req, res) => {
         const filePath = path.join(config.prReviewsDir, filename);
 
         // Use Agent SDK to complete actions
-        completeActionsWithAgent(sessionId, prInfo, filePath)
+        completeActionsWithAgent(sessionId, prInfo, filePath, useUltrathink)
           .then(result => {
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ success: true, ...result }));

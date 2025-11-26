@@ -2742,8 +2742,12 @@
         window.agentMonitorPanel.addLog('Connected to agent server', 'success');
       }
 
+      // Check ultrathink checkbox state
+      const ultrathinkCheckbox = document.getElementById('claude-ultrathink-checkbox');
+      const useUltrathink = ultrathinkCheckbox?.checked || false;
+
       // Answer questions using Agent SDK
-      const result = await window.agentClient.answerQuestions(currentPRInfo);
+      const result = await window.agentClient.answerQuestions(currentPRInfo, useUltrathink);
 
       if (result.success) {
         // Verify all questions have been answered
@@ -2910,8 +2914,12 @@
         window.agentMonitorPanel.addLog('Connected to agent server', 'success');
       }
 
+      // Check ultrathink checkbox state
+      const ultrathinkCheckbox = document.getElementById('claude-ultrathink-checkbox');
+      const useUltrathink = ultrathinkCheckbox?.checked || false;
+
       // Complete actions using Agent SDK
-      const result = await window.agentClient.completeActions(currentPRInfo);
+      const result = await window.agentClient.completeActions(currentPRInfo, useUltrathink);
 
       if (result.success) {
         // Verify all actions have summaries filled in

@@ -343,19 +343,20 @@ class AgentClient {
   /**
    * Answer questions using Agent SDK
    */
-  async answerQuestions(prInfo) {
+  async answerQuestions(prInfo, useUltrathink = false) {
     if (!this.sessionId) {
       throw new Error('No session - call startSession() first');
     }
 
-    console.log('[AGENT-CLIENT] Calling /answerQuestions with:', { sessionId: this.sessionId, prInfo });
+    console.log('[AGENT-CLIENT] Calling /answerQuestions with:', { sessionId: this.sessionId, prInfo, useUltrathink });
 
     const response = await fetch('http://localhost:47382/answerQuestions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         sessionId: this.sessionId,
-        prInfo
+        prInfo,
+        useUltrathink
       })
     });
 
@@ -374,19 +375,20 @@ class AgentClient {
   /**
    * Complete actions using Agent SDK
    */
-  async completeActions(prInfo) {
+  async completeActions(prInfo, useUltrathink = false) {
     if (!this.sessionId) {
       throw new Error('No session - call startSession() first');
     }
 
-    console.log('[AGENT-CLIENT] Calling /completeActions with:', { sessionId: this.sessionId, prInfo });
+    console.log('[AGENT-CLIENT] Calling /completeActions with:', { sessionId: this.sessionId, prInfo, useUltrathink });
 
     const response = await fetch('http://localhost:47382/completeActions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         sessionId: this.sessionId,
-        prInfo
+        prInfo,
+        useUltrathink
       })
     });
 

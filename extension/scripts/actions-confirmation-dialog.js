@@ -122,7 +122,7 @@ async function generateActionPrompt(prInfo, useUltrathink = false) {
   let prompt = '';
 
   if (useUltrathink) {
-    prompt = `IMPORTANT: <extended_thinking> for this task.\n\n`;
+    prompt = `IMPORTANT: Ultrathink for this task. Use <extended_thinking> mode.\n\n`;
   }
 
   prompt += `Read the file at: ${actionsFilePath}

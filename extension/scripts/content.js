@@ -291,13 +291,22 @@
     buttonGroup.style.position = 'absolute';
     buttonGroup.style.zIndex = '100';
 
-    // Main button click - open question dialog
+    // Main button click - open question or action dialog based on settings
     const mainButton = buttonGroup.querySelector('.claude-main-button');
-    mainButton.addEventListener('click', (e) => {
+    mainButton.addEventListener('click', async (e) => {
       e.preventDefault();
       e.stopPropagation();
       closeDropdownMenu();
-      showQuestionDialog();
+
+      // Check user preference for default action
+      const result = await chrome.storage.local.get('default_button_action');
+      const defaultAction = result.default_button_action || 'question';
+
+      if (defaultAction === 'action') {
+        showActionDialog(null, null);
+      } else {
+        showQuestionDialog();
+      }
     });
 
     // Dropdown button click - toggle menu
@@ -1874,19 +1883,13 @@
         const targetRow = findRowByLineNumber(file, endLine);
         if (!targetRow) return;
 
-        // Validate code if hash exists AND the entry is not brand new (created >5 seconds ago)
-        // This prevents validation from running on newly created questions in the same session
+        // Validate code if hash exists
         let validationStatus = null;
         let validationCurrentCode = null;
         if (entry.codeHash) {
-          const entryAge = Date.now() - new Date(entry.timestamp).getTime();
-          const isNewEntry = entryAge < 5000; // Less than 5 seconds old
-
-          if (!isNewEntry) {
-            const validation = validateCode(entry);
-            validationStatus = validation.status;
-            validationCurrentCode = validation.currentCode;
-          }
+          const validation = validateCode(entry);
+          validationStatus = validation.status;
+          validationCurrentCode = validation.currentCode;
         }
 
         // Create comment row (like GitHub PR comments)
@@ -2331,19 +2334,13 @@
           const targetRow = findRowByLineNumber(file, endLine);
           if (!targetRow) return;
 
-          // Validate code if hash exists AND the entry is not brand new (created >5 seconds ago)
-          // This prevents validation from running on newly created actions in the same session
+          // Validate code if hash exists
           let validationStatus = null;
           let validationCurrentCode = null;
           if (actionEntry.codeHash) {
-            const entryAge = Date.now() - new Date(actionEntry.timestamp).getTime();
-            const isNewEntry = entryAge < 5000; // Less than 5 seconds old
-
-            if (!isNewEntry) {
-              const validation = validateCode(actionEntry);
-              validationStatus = validation.status;
-              validationCurrentCode = validation.currentCode;
-            }
+            const validation = validateCode(actionEntry);
+            validationStatus = validation.status;
+            validationCurrentCode = validation.currentCode;
           }
 
           // Create action row
@@ -2643,9 +2640,33 @@
     actionsBtn.style.cssText = 'height: 28px; background: #ffb3ba; color: #d6336c; border: 1px solid #ffb3ba; font-weight: 500; padding: 0 12px;';
     actionsBtn.title = 'Ask Claude to complete all pending actions';
 
+    // Copy Action Prompt button (light pink, same style)
+    const copyPromptBtn = document.createElement('button');
+    copyPromptBtn.className = 'btn btn-sm';
+    copyPromptBtn.id = 'claude-copy-action-prompt-btn';
+    copyPromptBtn.innerHTML = 'Copy Action Prompt';
+    copyPromptBtn.style.cssText = 'height: 28px; width: 165px; background: #ffb3ba; color: #d6336c; border: 1px solid #ffb3ba; font-weight: 500; padding: 0 12px;';
+    copyPromptBtn.title = 'Copy action prompt for local Claude Code terminal (recommended for complex actions)';
+
+    // Ultrathink checkbox
+    const ultrathinkContainer = document.createElement('div');
+    ultrathinkContainer.className = 'ultrathink-container';
+
+    const ultrathinkCheckbox = document.createElement('input');
+    ultrathinkCheckbox.type = 'checkbox';
+    ultrathinkCheckbox.id = 'claude-ultrathink-checkbox';
+
+    const ultrathinkLabel = document.createElement('label');
+    ultrathinkLabel.htmlFor = 'claude-ultrathink-checkbox';
+    ultrathinkLabel.innerHTML = `<span class="rainbow-text"><span class="letter-u">U</span><span class="letter-l">l</span><span class="letter-t">t</span><span class="letter-r">r</span><span class="letter-a">a</span><span class="letter-t2">t</span><span class="letter-h">h</span><span class="letter-i">i</span><span class="letter-n">n</span><span class="letter-k">k</span></span>`;
+
+    ultrathinkContainer.appendChild(ultrathinkCheckbox);
+    ultrathinkContainer.appendChild(ultrathinkLabel);
+
     // Add click handlers
     answerBtn.addEventListener('click', triggerAnswerQuestions);
     actionsBtn.addEventListener('click', triggerCompleteActions);
+    copyPromptBtn.addEventListener('click', triggerCopyActionPrompt);
 
     // Add hover effects
     const addHoverEffect = (btn, hoverBg, normalBg) => {
@@ -2655,9 +2676,12 @@
 
     addHoverEffect(answerBtn, '#e67700', '#fb8500');
     addHoverEffect(actionsBtn, '#ffa0a7', '#ffb3ba');
+    addHoverEffect(copyPromptBtn, '#ffa0a7', '#ffb3ba');
 
     claudeButtons.appendChild(answerBtn);
     claudeButtons.appendChild(actionsBtn);
+    claudeButtons.appendChild(copyPromptBtn);
+    claudeButtons.appendChild(ultrathinkContainer);
 
     // Insert after review button
     buttonContainer.insertBefore(claudeButtons, reviewButton.nextSibling);
@@ -2772,6 +2796,48 @@
     }
   }
 
+  async function triggerCopyActionPrompt() {
+    const btn = document.getElementById('claude-copy-action-prompt-btn');
+    const ultrathinkCheckbox = document.getElementById('claude-ultrathink-checkbox');
+    const useUltrathink = ultrathinkCheckbox?.checked || false;
+
+    // Check if there are any actions
+    if (!(await hasActions())) {
+      alert('No actions to copy. Please mark code sections for action first.');
+      return;
+    }
+
+    // Check if all actions are already completed
+    if (!(await hasIncompleteActions())) {
+      alert('All actions have already been completed. Add new actions if you need more work done.');
+      return;
+    }
+
+    currentPRInfo = getPRInfo();
+    if (!currentPRInfo) {
+      alert('Could not detect PR information');
+      return;
+    }
+
+    // Disable button during copy
+    btn.disabled = true;
+    btn.innerHTML = 'Copying...';
+
+    try {
+      const result = await copyActionPromptToClipboard(currentPRInfo, useUltrathink);
+      btn.innerHTML = 'Copied!';
+      setTimeout(() => {
+        btn.innerHTML = 'Copy Action Prompt';
+        btn.disabled = false;
+      }, 1000);
+    } catch (error) {
+      console.error('[COPY-PROMPT] Error:', error);
+      showNotification(`❌ Failed to copy prompt: ${error.message}`);
+      btn.disabled = false;
+      btn.innerHTML = 'Copy Action Prompt';
+    }
+  }
+
   async function triggerCompleteActions() {
     const btn = document.getElementById('claude-complete-actions-btn');
     const currentState = btn.getAttribute('data-state') || 'idle';
@@ -2803,16 +2869,26 @@
       return;
     }
 
+    // Get PR info before showing dialog (needed for "Copy Prompt Instead" button)
+    currentPRInfo = getPRInfo();
+    if (!currentPRInfo) {
+      alert('Could not detect PR information');
+      return;
+    }
+
+    // Show confirmation dialog
+    const decision = await showActionsConfirmationDialog(currentPRInfo);
+    if (!decision.proceed) {
+      // User cancelled or copied prompt instead
+      return;
+    }
+
     // Start new action
     btn.disabled = true;
     btn.innerHTML = 'Starting...';
     btn.setAttribute('data-state', 'starting');
 
     try {
-      currentPRInfo = getPRInfo();
-      if (!currentPRInfo) {
-        throw new Error('Could not detect PR information');
-      }
 
       // Open monitor panel
       if (window.agentMonitorPanel) {
@@ -2970,6 +3046,18 @@
     window.addEventListener('scroll', () => {
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(syncWithCopilotButton, 10);
+    });
+
+    // Warn before navigation if agent is active
+    window.addEventListener('beforeunload', (e) => {
+      const isAgentActive = window.agentClient && window.agentClient.isAgentActive;
+
+      if (isAgentActive) {
+        // Standard way to show confirmation dialog on page unload
+        e.preventDefault();
+        e.returnValue = 'Claude is still working on actions. Are you sure you want to leave?';
+        return e.returnValue;
+      }
     });
 
     // Auto-restore from markdown files, then load and display

@@ -255,7 +255,7 @@
   padding: 12px 20px;
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 10002;
+  z-index: 10005; /* Above all dialogs */
   opacity: 0;
   transform: translateY(-20px);
   transition: all 0.3s ease;
@@ -735,7 +735,6 @@
   align-items: center;
   justify-content: center;
   z-index: 10004; /* Above monitor panel (10003) */
-  backdrop-filter: blur(2px);
 }
 
 .claude-permission-dialog {
@@ -844,6 +843,10 @@
   border: none;
   transition: all 0.2s ease;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 .permission-deny {
@@ -939,7 +942,6 @@
   align-items: center;
   justify-content: center;
   z-index: 10003;
-  backdrop-filter: blur(2px);
 }
 
 .claude-agent-monitor-panel {
@@ -988,6 +990,48 @@
 
 .monitor-title svg {
   flex-shrink: 0;
+}
+
+.monitor-pulse-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 8px;
+  font-size: 13px;
+  color: #0969da;
+  font-weight: 500;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: #0969da;
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+.pulse-text {
+  animation: pulseFade 2s ease-in-out infinite;
+}
+
+@keyframes pulseFade {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }
 
 .monitor-controls {
@@ -1109,6 +1153,10 @@
   color: #d73a49;
 }
 
+.log-warning .log-message {
+  color: #d29922;
+}
+
 .log-thinking .log-message {
   color: #8250df;
   font-style: italic;
@@ -1181,4 +1229,47 @@
   background: #c22032;
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(215, 58, 73, 0.3);
+}
+
+/* Rainbow gradient text for "Ultrathink" */
+.rainbow-text {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  position: relative;
+  display: inline-block;
+}
+
+/* Individual letter colors */
+.rainbow-text .letter-u { color: #FF7070; } /* Red */
+.rainbow-text .letter-l { color: #FFAA66; } /* Orange */
+.rainbow-text .letter-t { color: #FFD966; } /* Yellow */
+.rainbow-text .letter-r { color: #90E090; } /* Green */
+.rainbow-text .letter-a { color: #A3A3E0; } /* Purple */
+.rainbow-text .letter-t2 { color: #DD9FDD; } /* Purple/Lilac */
+.rainbow-text .letter-h { color: #DD9FDD; } /* Lilac */
+.rainbow-text .letter-i { color: #FF7070; } /* Red */
+.rainbow-text .letter-n { color: #FFAA66; } /* Orange */
+.rainbow-text .letter-k { color: #FFD966; } /* Yellow */
+
+
+/* Ultrathink checkbox container */
+.ultrathink-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 8px;
+  height: 28px;
+}
+
+.ultrathink-container input[type="checkbox"] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+
+.ultrathink-container label {
+  cursor: pointer;
+  margin: 0;
+  user-select: none;
+  font-size: 13px;
 }

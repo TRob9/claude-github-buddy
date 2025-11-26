@@ -21,8 +21,15 @@ async function showSettingsDialog() {
   };
   const permissions = permissionsResult.agent_permissions || defaultPermissions;
 
+  // Load default button action preference
+  const buttonActionResult = await chrome.storage.local.get('default_button_action');
+  const defaultButtonAction = buttonActionResult.default_button_action || 'question';
+
   // Load current directory config from server
-  let currentConfig = { prReviewsDir: '', projectsDir: '' };
+  let currentConfig = {
+    prReviewsDir: '~/claude-review/questions-and-actions',
+    projectsDir: '~/Projects'
+  };
 
   try {
     const response = await fetch('http://localhost:47382/getConfig');
@@ -32,7 +39,6 @@ async function showSettingsDialog() {
     }
   } catch (error) {
     console.error('Failed to load current config:', error);
-    // Server not running - fields will be empty, user needs to start server first
   }
 
   const toolsHtml = Object.keys(defaultPermissions).map(tool => `
@@ -47,8 +53,19 @@ async function showSettingsDialog() {
   `).join('');
 
   dialog.innerHTML = `
-    <div class="claude-dialog-content" style="max-width: 600px;">
+    <div class="claude-dialog-content" style="max-width: 600px; max-height: 80vh; overflow-y: auto;">
       <h3>Settings</h3>
+
+      <div style="margin-bottom: 24px;">
+        <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Default 'Claude' Button Action</h4>
+        <p style="margin: 0 0 12px 0; color: #656d76; font-size: 13px;">
+          Choose what happens when you click the main Claude button
+        </p>
+        <select id="claude-default-button-action" style="width: 100%; padding: 6px 8px; border: 1px solid #d0d7de; border-radius: 6px; font-size: 13px;">
+          <option value="question" ${defaultButtonAction === 'question' ? 'selected' : ''}>Ask a Question</option>
+          <option value="action" ${defaultButtonAction === 'action' ? 'selected' : ''}>Mark for Action</option>
+        </select>
+      </div>
 
       <div style="margin-bottom: 24px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -140,6 +157,11 @@ async function showSettingsDialog() {
 
   // Save button
   document.getElementById('claude-save-settings').addEventListener('click', async () => {
+    // Save default button action
+    const buttonAction = document.getElementById('claude-default-button-action').value;
+    await chrome.storage.local.set({ default_button_action: buttonAction });
+    console.log('[SETTINGS] Saved default button action:', buttonAction);
+
     // Save permissions
     const newPermissions = {};
     dialog.querySelectorAll('.permission-checkbox').forEach(checkbox => {

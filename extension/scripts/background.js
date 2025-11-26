@@ -120,7 +120,7 @@ function sanitizeFolderName(str) {
 
 async function exportToMarkdown(prInfo, questions) {
   // Structure: {repo_name}/PR-{pr_number}/Questions {date}.md
-  const repoName = prInfo.fullRepoName.split('/')[1]; // Extract repo part (e.g., myrepo)
+  const repoName = prInfo.fullRepoName.split('/')[1]; // Extract repo part (e.g., fabric-credit-card-repayments)
   const prFolder = `PR-${prInfo.prNumber}`; // e.g., "PR-168"
   const dateStr = getTodayDate();
   const filename = `${repoName}/${prFolder}/Questions ${dateStr}.md`;
@@ -198,6 +198,7 @@ function generateMarkdown(prInfo, questions) {
   const questionFileName = `Questions ${dateStr}.md`;
 
   md += `Hi Claude! I'm reviewing PR #${prInfo.prNumber} which merges \`${prInfo.headBranch}\` into \`${prInfo.baseBranch}\`.\n\n`;
+  md += `**CRITICAL INSTRUCTION:** Work through these questions COMPLETELY AUTONOMOUSLY. Do NOT stop to ask for assistance, clarification, or confirmation at any point. It is ABSOLUTELY ESSENTIAL that you complete ALL questions entirely self-directed without pausing or requesting help. You MUST proceed through every question without interruption. If you encounter any uncertainty, make your best technical judgment and continue. DO NOT STOP until all questions are answered.\n\n`;
   md += `**Repository Status:**\n`;
   md += `- You are already in the repository directory: \`${prInfo.fullRepoName}\`\n`;
   md += `- The branch \`${prInfo.headBranch}\` is already checked out and up-to-date\n`;
@@ -334,6 +335,7 @@ function generateActionsMarkdown(prInfo, actions) {
   md += `**Generated:** ${new Date().toISOString()}\n\n`;
   md += `---\n\n`;
   md += `Hi Claude! I've reviewed PR #${prInfo.prNumber} and marked some code sections for action.\n\n`;
+  md += `**CRITICAL INSTRUCTION:** Work through these actions COMPLETELY AUTONOMOUSLY. Do NOT stop to ask for assistance, clarification, or confirmation at any point. It is ABSOLUTELY ESSENTIAL that you complete ALL actions entirely self-directed without pausing or requesting help. You MUST proceed through every action without interruption. If you encounter any uncertainty, make your best technical judgment and continue. DO NOT STOP until all actions are completed.\n\n`;
   md += `**Repository Status:**\n`;
   md += `- You are already in the repository directory: \`${prInfo.fullRepoName}\`\n`;
   md += `- The branch \`${prInfo.headBranch}\` is already checked out and up-to-date\n`;

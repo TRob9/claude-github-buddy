@@ -148,3 +148,8 @@ async function copyActionPromptToClipboard(prInfo, useUltrathink = false) {
   await navigator.clipboard.writeText(prompt);
   return { success: true, prompt, filePath };
 }
+
+// Make functions globally accessible for content.js
+window.showActionsConfirmationDialog = showActionsConfirmationDialog;
+window.copyActionPromptToClipboard = copyActionPromptToClipboard;
+window.generateActionPrompt = generateActionPrompt;

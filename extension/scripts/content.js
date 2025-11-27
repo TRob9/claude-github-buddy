@@ -590,6 +590,15 @@
             </div>
           </li>
           <li class="prc-ActionList-Divider-rsZFG" aria-hidden="true"></li>
+          <li tabindex="-1" role="menuitem" class="claude-menu-item" data-action="refreshQuestionsActions">
+            <div class="prc-ActionList-ActionListContent-sg9-x">
+              <span class="prc-ActionList-Spacer-dydlX"></span>
+              <span class="prc-ActionList-ActionListSubContent-lP9xj">
+                <span class="prc-ActionList-ItemLabel-TmBhn">Refresh Questions/Actions</span>
+              </span>
+            </div>
+          </li>
+          <li class="prc-ActionList-Divider-rsZFG" aria-hidden="true"></li>
           <li tabindex="-1" role="menuitem" class="claude-menu-item" data-action="settings">
             <div class="prc-ActionList-ActionListContent-sg9-x">
               <span class="prc-ActionList-Spacer-dydlX"></span>
@@ -718,6 +727,9 @@
       case 'restoreFromFile':
         showRestoreFromFileDialog();
         break;
+      case 'refreshQuestionsActions':
+        refreshQuestionsAndActions();
+        break;
       case 'settings':
         showSettingsDialog();
         break;
@@ -759,6 +771,28 @@
         }
       });
     });
+  }
+
+  /**
+   * Refresh all questions and actions from files and re-render inline comments
+   * Useful when inline comments fail to render on large PRs
+   */
+  async function refreshQuestionsAndActions() {
+    console.log('[REFRESH] Clearing existing inline comments and reloading from files...');
+
+    // Clear all existing inline comment rows
+    document.querySelectorAll('.claude-inline-comment-row').forEach(el => el.remove());
+
+    // Re-sync from files and display
+    try {
+      await autoRestoreFromFiles();
+      loadAndDisplayAnswers();
+      loadAndDisplayActions();
+      showNotification('✅ Questions and actions refreshed!');
+    } catch (error) {
+      console.error('[REFRESH] Error refreshing:', error);
+      showNotification('❌ Failed to refresh: ' + error.message);
+    }
   }
 
   async function clearQuestionsFromMenu() {

@@ -83,6 +83,10 @@ class AgentMonitorPanel {
               </g>
             </svg>
             <span>Claude Agent Monitor</span>
+            <span class="monitor-pulse-indicator" id="monitor-pulse-indicator" style="display: none;">
+              <span class="pulse-dot"></span>
+              <span class="pulse-text">Working...</span>
+            </span>
           </div>
           <div class="monitor-controls">
             <button class="monitor-close-btn" title="Close">×</button>
@@ -205,6 +209,26 @@ class AgentMonitorPanel {
     // Send stop signal via WebSocket
     if (window.agentClient) {
       window.agentClient.stopAgent();
+    }
+  }
+
+  /**
+   * Start pulse indicator (agent is working)
+   */
+  startPulse() {
+    const pulseIndicator = document.getElementById('monitor-pulse-indicator');
+    if (pulseIndicator) {
+      pulseIndicator.style.display = 'inline-flex';
+    }
+  }
+
+  /**
+   * Stop pulse indicator (agent is idle/complete)
+   */
+  stopPulse() {
+    const pulseIndicator = document.getElementById('monitor-pulse-indicator');
+    if (pulseIndicator) {
+      pulseIndicator.style.display = 'none';
     }
   }
 

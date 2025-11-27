@@ -2742,6 +2742,9 @@
         window.agentMonitorPanel.addLog('Connected to agent server', 'success');
       }
 
+      // Start heartbeat monitoring
+      window.agentClient.startHeartbeatMonitoring();
+
       // Check ultrathink checkbox state
       const ultrathinkCheckbox = document.getElementById('claude-ultrathink-checkbox');
       const useUltrathink = ultrathinkCheckbox?.checked || false;
@@ -2795,6 +2798,9 @@
       btn.innerHTML = 'Answer Questions';
       btn.setAttribute('data-state', 'idle');
     } finally {
+      // Stop heartbeat monitoring
+      window.agentClient.stopHeartbeatMonitoring();
+
       // Close WebSocket connection
       window.agentClient.close();
     }
@@ -2914,6 +2920,9 @@
         window.agentMonitorPanel.addLog('Connected to agent server', 'success');
       }
 
+      // Start heartbeat monitoring
+      window.agentClient.startHeartbeatMonitoring();
+
       // Check ultrathink checkbox state
       const ultrathinkCheckbox = document.getElementById('claude-ultrathink-checkbox');
       const useUltrathink = ultrathinkCheckbox?.checked || false;
@@ -2971,6 +2980,9 @@
       btn.innerHTML = 'Start Actions';
       btn.setAttribute('data-state', 'idle');
     } finally {
+      // Stop heartbeat monitoring
+      window.agentClient.stopHeartbeatMonitoring();
+
       // Close WebSocket connection
       window.agentClient.close();
     }

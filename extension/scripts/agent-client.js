@@ -9,6 +9,10 @@ class AgentClient {
     this.sessionId = null;
     this.connected = false;
     this.messageHandlers = new Map();
+    this.lastMessageTime = null;
+    this.heartbeatInterval = null;
+    this.heartbeatWarningThreshold = 60000; // 60 seconds
+    this.isAgentActive = false;
   }
 
   /**
@@ -129,6 +133,9 @@ class AgentClient {
    */
   handleMessage(data) {
     console.log('[AGENT-CLIENT] Received:', data.type);
+
+    // Update last message time for heartbeat monitoring
+    this.lastMessageTime = Date.now();
 
     switch (data.type) {
       case 'connected':
@@ -338,6 +345,60 @@ class AgentClient {
     }
     this.connected = false;
     this.sessionId = null;
+  }
+
+  /**
+   * Start heartbeat monitoring
+   */
+  startHeartbeatMonitoring() {
+    this.lastMessageTime = Date.now();
+    this.isAgentActive = true;
+
+    // Start pulse indicator in monitor panel
+    if (window.agentMonitorPanel) {
+      window.agentMonitorPanel.startPulse();
+    }
+
+    // Clear any existing interval
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+    }
+
+    // Check every 10 seconds
+    this.heartbeatInterval = setInterval(() => {
+      if (!this.isAgentActive) return;
+
+      const timeSinceLastMessage = Date.now() - this.lastMessageTime;
+
+      if (timeSinceLastMessage > this.heartbeatWarningThreshold) {
+        console.warn('[AGENT-CLIENT] ⚠️  No message from Claude for', Math.floor(timeSinceLastMessage / 1000), 'seconds');
+
+        // Notify monitor panel
+        if (window.agentMonitorPanel && window.agentMonitorPanel.isOpen) {
+          window.agentMonitorPanel.addLog(
+            `⚠️ Warning: No activity from Claude for ${Math.floor(timeSinceLastMessage / 1000)} seconds. Agent may be stuck.`,
+            'warning'
+          );
+        }
+      }
+    }, 10000); // Check every 10 seconds
+  }
+
+  /**
+   * Stop heartbeat monitoring
+   */
+  stopHeartbeatMonitoring() {
+    this.isAgentActive = false;
+
+    // Stop pulse indicator in monitor panel
+    if (window.agentMonitorPanel) {
+      window.agentMonitorPanel.stopPulse();
+    }
+
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+      this.heartbeatInterval = null;
+    }
   }
 
   /**

@@ -1926,7 +1926,7 @@
                 <span class="claude-comment-meta">${entry.file} (${entry.lines})</span>
                 ${entry.answer ? '<button class="claude-action-btn" data-entry-id="' + existingId + '" data-question-index="' + index + '" title="Mark for action">Mark for Action</button><button class="claude-auto-action-btn" data-entry-id="' + existingId + '" data-question-index="' + index + '" title="Let Claude decide">I\'m feeling lucky</button>' : ''}
                 ${(validationStatus === 'partial' || validationStatus === 'invalid') ? '<button class="claude-archive-btn" data-entry-id="' + existingId + '" data-question-index="' + index + '" title="Archive this question">Archive</button>' : ''}
-                ${validationStatus ? '<button class="claude-view-original-btn" data-entry-id="' + existingId + '" data-original-code="' + escapeHtml(entry.code) + '" title="View original code">View Original</button>' : ''}
+                ${validationStatus ? '<button class="claude-view-original-btn" data-entry-id="' + existingId + '" data-original-code="' + escapeHtml(entry.code) + '" title="View code snapshot">View Code Snapshot</button>' : ''}
                 <button class="claude-delete-btn" data-entry-id="${existingId}" title="Delete this question">×</button>
               </div>
               <div class="claude-comment-body">
@@ -2376,7 +2376,7 @@
                   <span class="claude-comment-meta">${actionEntry.file} (${actionEntry.lines})</span>
                   <button class="claude-edit-action-btn" data-action-index="${actionIndex}" title="Edit action">Edit</button>
                   ${(validationStatus === 'partial' || validationStatus === 'invalid') ? '<button class="claude-archive-action-btn" data-action-index="' + actionIndex + '" title="Archive this action">Archive</button>' : ''}
-                  ${validationStatus ? '<button class="claude-view-original-action-btn" data-action-index="' + actionIndex + '" data-original-code="' + escapeHtml(actionEntry.code) + '" title="View original code">View Original</button>' : ''}
+                  ${validationStatus ? '<button class="claude-view-original-action-btn" data-action-index="' + actionIndex + '" data-original-code="' + escapeHtml(actionEntry.code) + '" title="View code snapshot">View Code Snapshot</button>' : ''}
                   <button class="claude-delete-action-btn" data-action-index="${actionIndex}" title="Delete this action">×</button>
                 </div>
                 <div class="claude-comment-body">
@@ -2654,7 +2654,7 @@
     copyPromptBtn.className = 'btn btn-sm';
     copyPromptBtn.id = 'claude-copy-action-prompt-btn';
     copyPromptBtn.innerHTML = 'Copy Action Prompt';
-    copyPromptBtn.style.cssText = 'height: 28px; width: 165px; background: #ffb3ba; color: #d6336c; border: 1px solid #ffb3ba; font-weight: 500; padding: 0 4px;';
+    copyPromptBtn.style.cssText = 'height: 28px; width: 140px; background: #ffb3ba; color: #d6336c; border: 1px solid #ffb3ba; font-weight: 500; padding: 0 4px;';
     copyPromptBtn.title = 'Copy action prompt for local Claude Code terminal (recommended for complex actions)';
 
     // Ultrathink checkbox

@@ -625,6 +625,24 @@
               </span>
             </div>
           </li>
+          <li class="prc-ActionList-Divider-rsZFG" aria-hidden="true"></li>
+          <li tabindex="-1" role="menuitem" class="claude-menu-item" data-action="copyQuestionsPath">
+            <div class="prc-ActionList-ActionListContent-sg9-x">
+              <span class="prc-ActionList-Spacer-dydlX"></span>
+              <span class="prc-ActionList-ActionListSubContent-lP9xj">
+                <span class="prc-ActionList-ItemLabel-TmBhn">Copy Questions Path</span>
+              </span>
+            </div>
+          </li>
+          <li class="prc-ActionList-Divider-rsZFG" aria-hidden="true"></li>
+          <li tabindex="-1" role="menuitem" class="claude-menu-item" data-action="copyActionsPath">
+            <div class="prc-ActionList-ActionListContent-sg9-x">
+              <span class="prc-ActionList-Spacer-dydlX"></span>
+              <span class="prc-ActionList-ActionListSubContent-lP9xj">
+                <span class="prc-ActionList-ItemLabel-TmBhn">Copy Actions Path</span>
+              </span>
+            </div>
+          </li>
         </ul>
       </div>
     `;
@@ -711,6 +729,12 @@
         break;
       case 'clearEverything':
         clearEverythingFromMenu();
+        break;
+      case 'copyQuestionsPath':
+        copyQuestionsPath();
+        break;
+      case 'copyActionsPath':
+        copyActionsPath();
         break;
     }
   }
@@ -1068,6 +1092,108 @@
     document.querySelectorAll('.claude-inline-comment-row').forEach(el => el.remove());
 
     showNotification('✅ Everything archived and cleared!');
+  }
+
+  async function copyQuestionsPath() {
+    currentPRInfo = getPRInfo();
+    if (!currentPRInfo) {
+      showNotification('❌ Could not detect PR information');
+      return;
+    }
+
+    try {
+      // Get config from server to get the base directory
+      const configResponse = await fetch('http://localhost:47382/getConfig');
+      const configData = await configResponse.json();
+
+      if (!configData.success) {
+        showNotification('❌ Failed to get server configuration');
+        return;
+      }
+
+      const prReviewsDir = configData.config?.prReviewsDir;
+      if (!prReviewsDir) {
+        showNotification('❌ Server configuration missing prReviewsDir');
+        return;
+      }
+
+      // Build file path
+      const repoName = currentPRInfo.fullRepoName.split('/')[1];
+      const prFolder = `PR-${currentPRInfo.prNumber}`;
+      const dateStr = new Date().toISOString().split('T')[0];
+      const questionsFilename = `${repoName}/${prFolder}/Questions ${dateStr}.md`;
+      const fullPath = `${prReviewsDir}/${questionsFilename}`;
+
+      // Check if file exists by trying to read it
+      const response = await fetch('http://localhost:47382/readFile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: questionsFilename })
+      });
+
+      if (!response.ok) {
+        showNotification('❌ Questions file for today does not exist');
+        return;
+      }
+
+      // File exists, copy path to clipboard
+      await navigator.clipboard.writeText(fullPath);
+      showNotification(`✅ Copied: ${fullPath}`);
+    } catch (error) {
+      console.error('[COPY-PATH] Error:', error);
+      showNotification(`❌ Failed to copy path: ${error.message}`);
+    }
+  }
+
+  async function copyActionsPath() {
+    currentPRInfo = getPRInfo();
+    if (!currentPRInfo) {
+      showNotification('❌ Could not detect PR information');
+      return;
+    }
+
+    try {
+      // Get config from server to get the base directory
+      const configResponse = await fetch('http://localhost:47382/getConfig');
+      const configData = await configResponse.json();
+
+      if (!configData.success) {
+        showNotification('❌ Failed to get server configuration');
+        return;
+      }
+
+      const prReviewsDir = configData.config?.prReviewsDir;
+      if (!prReviewsDir) {
+        showNotification('❌ Server configuration missing prReviewsDir');
+        return;
+      }
+
+      // Build file path
+      const repoName = currentPRInfo.fullRepoName.split('/')[1];
+      const prFolder = `PR-${currentPRInfo.prNumber}`;
+      const dateStr = new Date().toISOString().split('T')[0];
+      const actionsFilename = `${repoName}/${prFolder}/Actions ${dateStr}.md`;
+      const fullPath = `${prReviewsDir}/${actionsFilename}`;
+
+      // Check if file exists by trying to read it
+      const response = await fetch('http://localhost:47382/readFile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: actionsFilename })
+      });
+
+      if (!response.ok) {
+        showNotification('❌ Actions file for today does not exist');
+        return;
+      }
+
+      // File exists, copy path to clipboard
+      await navigator.clipboard.writeText(fullPath);
+      showNotification(`✅ Copied: ${fullPath}`);
+    } catch (error) {
+      console.error('[COPY-PATH] Error:', error);
+      showNotification(`❌ Failed to copy path: ${error.message}`);
+    }
   }
 
   function showRestoreFromFileDialog() {

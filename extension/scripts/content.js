@@ -1400,11 +1400,13 @@
 
       if (fileMatch && questionMatch) {
         const answer = answerMatch ? answerMatch[1].trim() : '';
+        const code = codeMatch ? codeMatch[1].trim() : '';
         questions.push({
           file: fileMatch[1],
           lines: linesMatch ? linesMatch[1].trim() : 'unknown',
           timestamp: timestampMatch ? timestampMatch[1].trim() : new Date().toISOString(),
-          code: codeMatch ? codeMatch[1].trim() : '',
+          code: code,
+          codeHash: code ? hashCode(code) : undefined, // Calculate hash for validation
           question: questionMatch[1].trim(),
           answer: answer && !answer.includes('[Claude, please fill') ? answer : undefined
         });
@@ -1429,11 +1431,13 @@
       const actionMatch = block.match(/\*\*ACTION:\*\*\s*([^*]+?)(?=\*\*SUMMARY:)/s);
 
       if (fileMatch && actionMatch) {
+        const code = codeMatch ? codeMatch[1].trim() : '';
         const action = {
           file: fileMatch[1],
           lines: linesMatch ? linesMatch[1].trim() : 'unknown',
           timestamp: timestampMatch ? timestampMatch[1].trim() : new Date().toISOString(),
-          code: codeMatch ? codeMatch[1].trim() : '',
+          code: code,
+          codeHash: code ? hashCode(code) : undefined, // Calculate hash for validation
           action: actionMatch[1].trim()
         };
 

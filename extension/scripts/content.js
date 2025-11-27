@@ -275,7 +275,7 @@
 
     // Set tooltip text based on preference
     const mainTooltipText = defaultAction === 'action'
-      ? 'Instruct Claude to make changes to this file'
+      ? 'Get Claude to change this file'
       : 'Ask Claude about this file-diff';
 
     // Create split button (single unified bubble)

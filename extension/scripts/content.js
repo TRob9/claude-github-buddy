@@ -136,7 +136,7 @@
   }
 
   // Watch for Copilot button visibility and position changes
-  function syncWithCopilotButton() {
+  async function syncWithCopilotButton() {
     const copilotContainer = document.querySelector('.DiffLinesMenu-module__diff-button-container--fFHPz');
     const copilotButton = document.querySelector('[data-testid="copilot-ask-menu"]');
 
@@ -153,7 +153,7 @@
       // Get or create Claude button
       let claudeButton = document.getElementById('claude-pr-buddy-button');
       if (!claudeButton) {
-        createClaudeButton();
+        await createClaudeButton();
         claudeButton = document.getElementById('claude-pr-buddy-button');
       }
 
@@ -263,11 +263,20 @@
   }
 
   // Create the Claude button (called by syncWithCopilotButton)
-  function createClaudeButton() {
+  async function createClaudeButton() {
     console.log('[BUTTON] Creating new Claude button');
 
     // If Claude was already active, show fake immediately (mouse already over Claude area)
     const wasActive = isClaudeButtonActive;
+
+    // Get user preference for default action
+    const result = await chrome.storage.local.get('default_button_action');
+    const defaultAction = result.default_button_action || 'question';
+
+    // Set tooltip text based on preference
+    const mainTooltipText = defaultAction === 'action'
+      ? 'Instruct Claude to make changes to this file'
+      : 'Ask Claude about this file-diff';
 
     // Create split button (single unified bubble)
     const buttonGroup = document.createElement('div');
@@ -276,12 +285,12 @@
     // Split button HTML - left button (icon) + right button (dropdown)
     buttonGroup.innerHTML = `
       <div class="claude-button-wrapper">
-        <button type="button" class="claude-main-button" data-tooltip="Ask Claude about this file-diff">
+        <button type="button" class="claude-main-button">
           ${CLAUDE_ICON_SVG}
         </button>
       </div>
       <div class="claude-button-wrapper">
-        <button type="button" class="claude-dropdown-button" aria-haspopup="true" aria-expanded="false" data-tooltip="Claude PR Helper Menu">
+        <button type="button" class="claude-dropdown-button" aria-haspopup="true" aria-expanded="false">
           ${TRIANGLE_DOWN_SVG}
         </button>
       </div>
@@ -335,7 +344,7 @@
     });
 
     // Add GitHub-style tooltips using their tooltip system
-    addGitHubTooltips(mainButton, dropdownButton);
+    addGitHubTooltips(mainButton, dropdownButton, mainTooltipText);
 
     // If Claude was active before recreation, show fake again
     if (wasActive) {
@@ -344,7 +353,7 @@
   }
 
 
-  function addGitHubTooltips(mainButton, dropdownButton) {
+  function addGitHubTooltips(mainButton, dropdownButton, mainTooltipText = 'Ask Claude about this file-diff') {
     // Create tooltip elements using GitHub's Primer tooltip classes
     const mainTooltipId = 'claude-main-tooltip-' + Date.now();
     const dropdownTooltipId = 'claude-dropdown-tooltip-' + Date.now();
@@ -356,7 +365,7 @@
     mainTooltip.setAttribute('aria-hidden', 'true');
     mainTooltip.setAttribute('id', mainTooltipId);
     mainTooltip.setAttribute('popover', 'auto');
-    mainTooltip.textContent = 'Ask Claude about this file-diff';
+    mainTooltip.textContent = mainTooltipText;
     mainButton.setAttribute('aria-labelledby', mainTooltipId);
     mainButton.parentElement.appendChild(mainTooltip);
 

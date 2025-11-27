@@ -2645,7 +2645,7 @@
     copyPromptBtn.className = 'btn btn-sm';
     copyPromptBtn.id = 'claude-copy-action-prompt-btn';
     copyPromptBtn.innerHTML = 'Copy Action Prompt';
-    copyPromptBtn.style.cssText = 'height: 28px; width: 165px; background: #ffb3ba; color: #d6336c; border: 1px solid #ffb3ba; font-weight: 500; padding: 0 12px;';
+    copyPromptBtn.style.cssText = 'height: 28px; width: 165px; background: #ffb3ba; color: #d6336c; border: 1px solid #ffb3ba; font-weight: 500; padding: 0 8px;';
     copyPromptBtn.title = 'Copy action prompt for local Claude Code terminal (recommended for complex actions)';
 
     // Ultrathink checkbox

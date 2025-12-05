@@ -25,29 +25,53 @@ A Chrome extension that brings a Claude assistant directly into the "Files Chang
 
 ## Quick Start
 
-### 1. Install Dependencies
+**⚠️ First Time Setup:** See [SETUP.md](SETUP.md) for detailed installation and configuration instructions.
+
+**Quick version:**
+
+### 1. Configure Environment
+
+```bash
+# Copy environment template
+cp .env.example .env
+
+# Edit .env with your paths
+# - NODE_PATH (find with: which node)
+# - HTTP_PORT / WS_PORT
+# - PROJECTS_DIR
+# - PR_REVIEWS_DIR
+```
+
+### 2. Install Dependencies
 
 ```bash
 cd server
 npm install
 ```
 
-### 2. Start the Server
+### 3. Start the Server
 
-**Option 1 - Double-click launcher (easiest):**
 ```bash
+# Daemon mode (recommended - runs in background)
+./start_server_daemon.command
+
+# Foreground mode (legacy)
 ./Start Server.command
+
+# Or manual
+cd server && node server.js
 ```
 
-**Option 2 - Manual:**
+**Server management:**
 ```bash
-cd server
-node server.js
+./server_status.command    # Check if running
+./stop_server.command       # Stop daemon
+./server_logs.command       # View logs
 ```
 
-The server runs on `http://localhost:47382` and handles file I/O and Claude Agent SDK integration.
+The server runs on `http://localhost:13030` (configurable in `.env`) and handles file I/O and Claude Agent SDK integration.
 
-### 3. Install the Extension
+### 4. Install the Extension
 
 **Chrome/Edge/Brave/Opera:**
 1. Open `chrome://extensions/` (or `edge://extensions/` for Edge)
@@ -55,11 +79,12 @@ The server runs on `http://localhost:47382` and handles file I/O and Claude Agen
 3. Click "Load unpacked"
 4. Select the `extension/` folder
 
-### 4. Configure (Optional)
+### 5. Configure Extension
 
 Open Settings from the extension dropdown menu to configure:
-- **Projects Directory**: Where git repositories are cloned
-- **Questions & Actions Directory**: Where markdown files are saved
+- **Server URL**: Should match HTTP_PORT in `.env` (default: `http://localhost:13030`)
+- **Projects Directory**: Where git repositories are cloned (syncs from `.env`)
+- **Questions & Actions Directory**: Where markdown files are saved (syncs from `.env`)
 - **Agent Permissions**: Which tools Claude can use automatically
 
 ## Usage
@@ -119,20 +144,46 @@ claude-github-buddy/
 
 ## Configuration
 
+**Full configuration guide:** See [SETUP.md](SETUP.md) for detailed setup instructions.
+
 ### Environment Variables
 
-**Required for Agent SDK features:**
-- `ANTHROPIC_API_KEY` or `ANTHROPIC_VERTEX_PROJECT_ID` - Your Claude API credentials
+Configuration is managed via `.env` file (copy from `.env.example`):
 
-**Optional:**
-- `ANTHROPIC_VERTEX_PROJECT_ID` - GCP project ID for Vertex AI
+**Server configuration:**
+- `NODE_PATH` - Full path to Node.js binary (required for launchd/daemon mode)
+- `HTTP_PORT` - HTTP server port (default: 13030)
+- `WS_PORT` - WebSocket server port (default: 13031)
+
+**Directory configuration:**
+- `PROJECTS_DIR` - Where your git repositories are located
+- `PR_REVIEWS_DIR` - Where markdown review files are saved
+
+**Git configuration (optional):**
+- `GIT_GITHUB_PROTOCOL` - Git protocol for github.com (default: ssh)
+- `GIT_GITHUB_SSH_KEY` - SSH key path (default: ~/.ssh/id_ed25519)
+
+**Claude API (required for Agent SDK features):**
+- `ANTHROPIC_API_KEY` - Your Claude API key
+- `ANTHROPIC_VERTEX_PROJECT_ID` - GCP project ID for Vertex AI (alternative)
 - `CLOUD_ML_REGION` - GCP region for Vertex AI
 
-**Example:**
+**Example .env:**
 ```bash
-export ANTHROPIC_API_KEY=your-api-key
-node server.js
+NODE_PATH=/opt/homebrew/bin/node
+HTTP_PORT=13030
+WS_PORT=13031
+PROJECTS_DIR=/Users/yourusername/Projects
+PR_REVIEWS_DIR=/Users/yourusername/claude-github-buddy/questions and actions
+ANTHROPIC_API_KEY=your-api-key
 ```
+
+### Configuration Priority
+
+The server loads configuration in this order (highest priority first):
+1. `.env` file variables
+2. `server/config.json` (UI settings)
+3. Hardcoded defaults
 
 ## Server API
 
@@ -208,23 +259,33 @@ _[Claude, please fill in your action summary here]_
 
 ## Troubleshooting
 
+**Full troubleshooting guide:** See [SETUP.md](SETUP.md#troubleshooting)
+
 **Server won't start:**
 ```bash
+# Check configuration
+cat .env
+
 # Check port availability
-lsof -i :47382
+lsof -i :13030
 
 # Verify Node.js installation
 node --version  # Should be v16 or higher
+
+# Check logs
+./server_logs.command
 ```
 
 **Extension can't save files:**
-- Verify server is running (`curl http://localhost:47382/health`)
+- Verify server is running: `./server_status.command`
+- Check health endpoint: `curl http://localhost:13030/health`
 - Check Chrome DevTools → Console for errors
-- Ensure server directory has write permissions
+- Verify server URL in extension settings matches `.env` port
 
 **Agent SDK not working:**
-- Set `ANTHROPIC_API_KEY` environment variable
-- Check server logs for authentication errors
+- Set `ANTHROPIC_API_KEY` in `.env` file
+- Restart server after updating `.env`
+- Check server logs for authentication errors: `./server_logs.command`
 - Verify API key has sufficient credits
 
 ## Development
@@ -266,6 +327,13 @@ MIT
 ## Contributing
 
 Contributions welcome! Please open an issue or PR.
+
+**For contributors:**
+1. Copy `.env.example` to `.env` and configure for your setup
+2. Never commit `.env` or `server/config.json` (already gitignored)
+3. Update `.env.example` if adding new configuration options
+4. Test setup on a fresh clone to ensure it works for others
+5. Update [SETUP.md](SETUP.md) with any new setup steps
 
 ## Credits
 

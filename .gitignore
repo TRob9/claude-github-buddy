@@ -3,6 +3,7 @@ server/node_modules/
 server/package-lock.json
 
 # User-specific config
+.env
 server/config.json
 
 # Generated review files (contains user data and repo-specific content)
@@ -26,3 +27,8 @@ questions and actions/
 # Logs
 *.log
 npm-debug.log*
+
+# Server daemon files
+server/server.pid
+server/launchd.log
+server/launchd.error.log

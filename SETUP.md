@@ -59,7 +59,7 @@ cd ..
 Start the server manually first to ensure everything works:
 
 ```bash
-./start_server_daemon.command
+./launchers/start_server_daemon.command
 ```
 
 You should see:
@@ -111,7 +111,7 @@ mkdir -p ~/Library/LaunchAgents
 
     <key>ProgramArguments</key>
     <array>
-        <string>/full/path/to/claude-github-buddy/start_server_daemon.command</string>
+        <string>/full/path/to/claude-github-buddy/launchers/start_server_daemon.command</string>
     </array>
 
     <key>RunAtLoad</key>
@@ -153,18 +153,18 @@ This means `.env` takes precedence over UI settings, allowing you to lock certai
 
 ```bash
 # Start server
-./start_server_daemon.command
+./launchers/start_server_daemon.command
 
 # Stop server
-./stop_server.command
+./launchers/stop_server.command
 
 # Check status
-./server_status.command
+./launchers/server_status.command
 
 # View logs
-./server_logs.command           # Last 50 lines
-./server_logs.command -f         # Follow in real-time
-./server_logs.command 100        # Last 100 lines
+./launchers/server_logs.command           # Last 50 lines
+./launchers/server_logs.command -f         # Follow in real-time
+./launchers/server_logs.command 100        # Last 100 lines
 ```
 
 ### launchd Control (if using auto-start)
@@ -351,7 +351,7 @@ Option 1 - Via `.env` (recommended):
 PROJECTS_DIR=/new/path/to/projects
 
 # Restart server
-./stop_server.command && ./start_server_daemon.command
+./launchers/stop_server.command && ./start_server_daemon.command
 ```
 
 Option 2 - Via extension UI:
@@ -367,7 +367,7 @@ HTTP_PORT=14030
 WS_PORT=14031
 
 # Restart server
-./stop_server.command && ./start_server_daemon.command
+./launchers/stop_server.command && ./start_server_daemon.command
 
 # Update extension settings
 # Settings → Server URL → http://localhost:14030

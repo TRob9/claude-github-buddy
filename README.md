@@ -53,7 +53,7 @@ npm install
 
 ```bash
 # Daemon mode (recommended - runs in background)
-./start_server_daemon.command
+./launchers/start_server_daemon.command
 
 # Foreground mode (legacy)
 ./Start Server.command
@@ -64,9 +64,9 @@ cd server && node server.js
 
 **Server management:**
 ```bash
-./server_status.command    # Check if running
-./stop_server.command       # Stop daemon
-./server_logs.command       # View logs
+./launchers/server_status.command    # Check if running
+./launchers/stop_server.command       # Stop daemon
+./launchers/server_logs.command       # View logs
 ```
 
 The server runs on `http://localhost:13030` (configurable in `.env`) and handles file I/O and Claude Agent SDK integration.
@@ -273,7 +273,7 @@ lsof -i :13030
 node --version  # Should be v16 or higher
 
 # Check logs
-./server_logs.command
+./launchers/server_logs.command
 ```
 
 **Extension can't save files:**
